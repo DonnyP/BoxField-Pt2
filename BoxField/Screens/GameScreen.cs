@@ -37,8 +37,12 @@ namespace BoxField
         int patternDirection = 0;  // 0 = left, 1 = right
         int patternLength = 4;
         int xChange = 7;
+        int gameScore = 0;
 
         Random rand = new Random();
+
+        character ch = new character(450, 400, 30, 4);
+        
 
         public GameScreen()
         {
@@ -169,6 +173,8 @@ namespace BoxField
 
                 newCubeCounter = 4;
                 patternLength--;
+                gameScore++;
+                scoreLabel.Text = Convert.ToString(gameScore);
             }
             else
             {
@@ -182,11 +188,36 @@ namespace BoxField
             foreach (Cube c in cubesLeft)
             {
                 c.y += c.speed;
+                if (ch.collision(ch, c) == true)
+                {
+                    gameLoop.Enabled = false;
+
+                    Form F = this.FindForm();
+                    F.Controls.Remove(this);
+
+                    scoreScreen ss = new scoreScreen();
+                    F.Controls.Add(ss);
+
+                    break;
+                        
+                } 
             }
 
             foreach (Cube c in cubesRight)
             {
                 c.y += c.speed;
+                if (ch.collision(ch,c) == true)
+                {
+                    gameLoop.Enabled = false;
+
+                    Form F = this.FindForm();
+                    F.Controls.Remove(this);
+
+                    scoreScreen ss = new scoreScreen();
+                    F.Controls.Add(ss);
+
+                    break;
+                }
             }
            
             #endregion
@@ -201,6 +232,14 @@ namespace BoxField
             
             #endregion
 
+            if (leftArrowDown)
+            {
+                ch.move(ch, "left");
+            }
+            else if (rightArrowDown)
+            {
+                ch.move(ch, "right");
+            }
             Refresh();
         }
 
@@ -217,6 +256,7 @@ namespace BoxField
                 e.Graphics.DrawRectangle(cubePen, c.x, c.y, c.size, c.size);
                 e.Graphics.FillRectangle(colors[c.colour], c.x, c.y, c.size, c.size);
             }
+            e.Graphics.DrawEllipse(cubePen, ch.x, ch.y, ch.size, ch.size);
         }
 
 
